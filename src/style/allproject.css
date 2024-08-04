@@ -1,0 +1,89 @@
+.form-wrapper{
+    padding: 40px 40px;
+}
+form {
+    display:flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+form div{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+label{
+    font-size: 24px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    padding: 4px 8px;
+    border: 1px solid black;
+    border-radius: 4px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+input[type="text"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+input:invalid{
+    border: 2px solid #ff0000;
+    box-shadow: 0 0 5px #ff0000;
+}
+
+form button{
+    background-color: rgb(0, 172, 230);
+    padding: 4px 6px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: none;
+}
+
+/* project list  */
+
+.projectlist-title{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #a7a8cb;
+    color: black;
+}
+
+.project-list{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 30px;
+}
+.projectcard{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.left {
+    display: flex;
+}
+
+.projectcard p, .projectcard h2 {
+    font-size:20px;
+}
+.remove-button{
+    background-color: #830000;
+    padding: 3px 6px;
+    color: white;
+    font-size: 12px;
+}
+
+.project-list ol li{
+    font-size: 20px;
+    padding-top: 8px;
+    /* border-bottom: 1px solid white; */
+}
+
