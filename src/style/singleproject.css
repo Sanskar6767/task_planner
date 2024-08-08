@@ -158,7 +158,7 @@ button[type="submit"]:hover {
 
 /* css for the task opener and closer popup  */
 /* The Modal (background) */
-.modal {
+.modal, .modal-edit {
     /* display: none;  */
     position: fixed; /* Stay in place */
     z-index: 1000; /* Sit on top */

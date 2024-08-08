@@ -15,7 +15,7 @@ export function singleProjectLoad(projectname) {
         } 
     });
     if (!selectedProject) {
-        console.log('Project not found');
+        console.log('Project not found!');
         return;
     };
     const main = document.querySelector('.main');
@@ -86,35 +86,37 @@ export function singleProjectLoad(projectname) {
     main.appendChild(taskaddWrapper);
 
 
-    // task opening 
+    // all the eventlisteners for the task items
     const tasks = document.querySelectorAll('.taskItem');
     tasks.forEach(task => {
         task.addEventListener('click', function() {
-            if (event.target.tagName !== 'INPUT' && event.target.tagName !== 'BUTTON') {
+            if (event.target.tagName !== 'INPUT' && event.target.tagName !== 'BUTTON') { // Ignore clicks on the checkbox and buttons to open the task
                 const tasknumber = this.dataset.taskIndex;
                 taskOpener(selectedProject, tasknumber);
-            } else if (event.target.tagName === 'INPUT') {
-                if (input.id === 'completed'){
+            } else if (event.target.tagName === 'INPUT') { 
+                if (event.target.id === 'completed'){   // Handle clicks on the completion checkbox
                     const tasknumber = this.dataset.taskIndex;
                     changeCompletionStatus(selectedProject, tasknumber);
+                } else if (event.target.id === 'priority') { // Handle clicks on the priority checkbox
+                    const tasknumber = this.dataset.taskIndex;
+                    changePriorityStatus(selectedProject, tasknumber);
+                }
+            } else if (event.target.tagName === 'BUTTON') { // Handle clicks on the edit and remove buttons
+                if (event.target.classList.contains('edit')) {
+                    const tasknumber = this.dataset.taskIndex;
+                    editTaskForm(selectedProject, tasknumber);
+                } else if (event.target.classList.contains('remove')) {
+                    const tasknumber = this.dataset.taskIndex;
+                    removeTask(selectedProject, tasknumber);
                 }
             }
         });
     });
-
-    // // checkbox working 
-    // const checkboxes = document.querySelector('#completed');
-    // checkboxes.forEach(checkbox => {
-    //     checkbox.addEventListener('click', function(event) {
-    //         event.stopPropagation();
-    //         // Add your specific function here, e.g., update task priority or completion status
-    //     });
-    // });
-    
     
 }
 
-function taskOpener(selectedProject, tasknumber) {  
+
+function taskOpener(selectedProject, tasknumber) {  // Function to open the task in a modal
     const task = selectedProject.tasks[tasknumber];
     console.log(task);
     //  write the js code to create this Modal Structure
@@ -163,7 +165,7 @@ function taskOpener(selectedProject, tasknumber) {
 
     const p4 = document.createElement('p');
     p4.id = 'modalTaskCompleted';
-    p4.textContent = `Completed: ${task.priority}`; 
+    p4.textContent = `Completed: ${task.completed}`; 
 
     modalContent.appendChild(closeButton);
     modalContent.appendChild(h2);
@@ -183,10 +185,125 @@ function taskOpener(selectedProject, tasknumber) {
     });
 }
 
-function changeCompletionStatus(selectedProject, tasknumber) {
+function changeCompletionStatus(selectedProject, tasknumber) { // Function to change the completion status of a task
     const task = selectedProject.tasks[tasknumber];
     task.toggleCompletion();
-    createSingleProject(selectedProject);
+    createSingleProject(selectedProject.name );
+}
+
+function changePriorityStatus(selectedProject, tasknumber) { // Function to change the priority status of a task
+    const task = selectedProject.tasks[tasknumber];
+    task.changePriority();
+    createSingleProject(selectedProject.name);
+}
+
+function editTaskForm(selectedProject, tasknumber) { // Function to edit a task
+    const task = selectedProject.tasks[tasknumber];
+    // Write the js code to create this form structure that would be able to change the description and duedate only
+    // <form id="edit-task-form">
+    //     <div class="form-group">
+    //         <label for="task-desc">Task Description:</label>
+    //         <textarea id="task-desc" name="task-desc"></textarea>
+    //     </div>
+    //     <div class="form-group">
+    //         <label for="task-deadline">Deadline:</label>
+    //         <input type="date" id="task-deadline" name="task-deadline">
+    //     </div>
+    //     <div class="form-buttons">
+    //         <button type="submit" id="submit-button">Submit</button>
+    //         <button type="button" id="cancel-button">Cancel</button>
+    //     </div>
+    // </form>
+
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+
+    const form = document.createElement('form');
+    form.id = 'edit-task-form';
+
+    const formGroup1 = document.createElement('div');
+    formGroup1.classList.add('form-group');
+
+    const ltaskdesc = document.createElement('label');
+    ltaskdesc.textContent = 'Task Description:';
+    ltaskdesc.setAttribute('for', 'task-desc');
+    
+
+    const tinput = document.createElement('textarea');
+    tinput.id = 'task-desc';
+    tinput.setAttribute('name', 'task-desc');
+    tinput.textContent = task.desc;
+
+    formGroup1.appendChild(ltaskdesc);
+    formGroup1.appendChild(tinput);
+
+    const formGroup2 = document.createElement('div');
+    formGroup2.classList.add('form-group');
+
+    const taskDeadline = document.createElement('label');
+    taskDeadline.textContent = 'Deadline:';
+    taskDeadline.setAttribute('for', 'task-deadline');
+
+    const idate = document.createElement('input');
+    idate.id = 'task-deadline';
+    idate.setAttribute('name', 'task-deadline');
+    idate.setAttribute('type', 'date');
+    idate.value = task.duedate;
+
+    formGroup2.appendChild(taskDeadline);
+    formGroup2.appendChild(idate);
+
+    const formButton = document.createElement('div');
+    formButton.classList.add('form-buttons');
+
+    const button1 = document.createElement('button');
+    button1.setAttribute('type', 'submit');
+    button1.textContent = 'Submit';
+    button1.id = 'submit-button';
+
+    const button2 = document.createElement('button');
+    button2.setAttribute('type', 'button');
+    button2.textContent = 'Cancel';
+    button2.id = 'cancel-button';
+
+    formButton.appendChild(button1);
+    formButton.appendChild(button2);
+
+    form.appendChild(formGroup1);
+    form.appendChild(formGroup2);
+    form.appendChild(formButton);
+
+    modal.appendChild(form);
+    document.body.appendChild(modal);
+
+    flatpickr("#task-deadline", {
+        dateFormat: "Y-m-d",
+        minDate: "today", // Disables past dates
+    });
+
+    button2.addEventListener('click', function() {
+        document.body.removeChild(modal);
+    });
+    
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        updateTaskForm(selectedProject, tasknumber, tinput.value, idate.value);
+        modal.style.display = 'none';
+        document.body.removeChild(modal);
+    });
+
+}
+
+function updateTaskForm(selectedProject, tasknumber, desc, date) { // Function to update the task from edit task form
+    const task = selectedProject.tasks[tasknumber];
+    task.changeDesc(desc);
+    task.changeDuedate(date);
+    createSingleProject(selectedProject.name);
+}
+
+function removeTask(selectedProject, tasknumber) { // Function to remove a task
+    selectedProject.tasks.splice(tasknumber, 1);
+    createSingleProject(selectedProject.name);
 }
 
 

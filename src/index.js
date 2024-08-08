@@ -30,7 +30,7 @@ export let allProjects = [project1, project2, project3];
 
 
 createAllProjectsPage(); 
-createSingleProject('Project_1');
+// createSingleProject('Project_1');
 // formSubmitNew();
 
 document.querySelector('.all-pro').addEventListener('click', function() {
