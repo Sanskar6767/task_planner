@@ -60,30 +60,49 @@ form button{
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 12px 30px;
+    padding: 12px 0;
 }
 .projectcard{
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-bottom: 8px;
 }
 .left {
     display: flex;
 }
 
 .projectcard p, .projectcard h2 {
-    font-size:20px;
+    font-size:28px;
 }
 .remove-button{
-    background-color: #830000;
+    background-color: #d71c1c;
     padding: 3px 6px;
     color: white;
-    font-size: 12px;
+    font-size: 18px;
+}
+.project-list ol{
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    background-color: #a7a8cb;
+    color: black;
+    list-style-type: none;
+    padding-left: 20px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-right: 20px;
+    font-size: 24px;
 }
 
 .project-list ol li{
-    font-size: 20px;
-    padding-top: 8px;
+    font-size: 24px;
+    /* padding-top: 8px; */
     /* border-bottom: 1px solid white; */
+}
+
+
+.project-item {
+    cursor: pointer;
 }
 

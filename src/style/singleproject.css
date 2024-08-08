@@ -25,23 +25,63 @@
 .left-task{
     display: flex;
     gap: 24px;
+    padding: 4px 8px;
+    align-items: center;
 }
 
 .right-task {
     display: flex;
     gap: 8px;
+    font-size: 24px;
+    gap: 18px;
+    align-items: center;
 }
 
 .left-task h2 {
-    font-size: 18px;
+    font-size: 24px;
 }
 
 .edit{
     background-color: rgb(13, 182, 244);
+    /* color: white; */
+    font-size: 14px;
+    padding: 6px 10px;
+    border: none;
 }
 
 .remove {
-    background-color: red;
+    background-color: #ff0000;
+    color: white;
+    font-size: 14px;
+    padding: 6px 10px;
+    border: none;
+}
+
+.left-task input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+}
+
+.right-task input[type="checkbox"] {
+    margin-right: 10px;
+}
+/* star checkbox priority  */
+/* Hide the default checkbox */
+.right-task input[type="checkbox"] {
+    appearance: none; /* For most browsers */
+    -moz-appearance: none; /* For Firefox */
+    -webkit-appearance: none; /* For WebKit browsers */
+    background-image: url('/src/assets/star.png');
+    background-size: contain;
+    width: 20px; /* Adjust the size as needed */
+    height: 20px; /* Adjust the size as needed */
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+/* Show the filled star when checked */
+.right-task input[type="checkbox"]:checked {
+    background-image: url('/src/assets/star\ \(1\).png');
 }
 
 
@@ -115,3 +155,54 @@ button[type="submit"]:hover {
     background-color: #6a0a0c;   
 }
 
+
+/* css for the task opener and closer popup  */
+/* The Modal (background) */
+.modal {
+    /* display: none;  */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #FED800;
+    margin: 15% auto 0; /* 15% from the top and centered */
+/*     padding: 20px 0px; */
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    position: relative;
+    color: #000;
+}
+.modal-content h2{
+  padding: 12px;
+}
+
+.content{
+  background-color: #FFE761;
+  padding: 12px;
+}
+
+/* The Close Button */
+.close-button {
+    color: #ff0000;
+    padding: 0 8px;
+    background-color: #e0d4d3;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}

@@ -1,12 +1,12 @@
 import { format } from "date-fns";
 
 export class TodoItem {
-    constructor(title, desc, duedate, priority) {
+    constructor(title, desc, duedate, priority = false, completed = false) {
         this.title = title;
         this.desc = desc;
         this.duedate = duedate;
-        this.priority = false;
-        this.completed = false
+        this.priority = priority;
+        this.completed = completed;
     }
 
     changeTitle(name){

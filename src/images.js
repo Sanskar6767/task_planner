@@ -16,7 +16,7 @@ document.querySelector('.all').src = img;
 
 
 
-// sidebar
+// sidebar toggle
 const navBar = document.querySelector("nav")
 const toggleNavBtn = document.querySelector("#toggle-nav-btn")
 

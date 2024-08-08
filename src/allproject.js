@@ -2,6 +2,7 @@ import { allProjects } from ".";
 import { Project } from "./project";
 import { navLinkActivate } from "./images";
 import { createSingleProject } from "./singleproject";
+import { updateActiveSidebar } from "./singleproject";
 
 
 
@@ -10,6 +11,7 @@ function createAllProjectForm(){
     const formWrapper = document.createElement('div');
     formWrapper.classList.add('form-wrapper')
     const form = document.createElement('form');
+    form.classList.add('new-project-form');
     const div = document.createElement('div');
     const label = document.createElement('label');
     label.setAttribute('for', 'projectname');
@@ -18,9 +20,9 @@ function createAllProjectForm(){
     input.setAttribute('type', 'text');
     input.setAttribute('name', 'projectname');
     input.setAttribute('placeholder', 'Project Name');
-    input.setAttribute('pattern', '[a-z1-9_]+');
-    input.setAttribute('title', 'Only lowercase letters, numbers, and underscores are allowed');
-    // input.required = true;
+    input.setAttribute('pattern', '^[A-Za-z][A-Za-z0-9_]*$');
+    input.setAttribute('title', 'Must start with a letter and can only have letters, numbers, and underscores');
+    input.required = true;
     const button = document.createElement('button');
     button.textContent = 'Submit';
     button.id = 'new-project-button';
@@ -31,6 +33,33 @@ function createAllProjectForm(){
     form.appendChild(button);
     formWrapper.appendChild(form);
     main.appendChild(formWrapper);
+
+    projectFormSubmit();
+}
+
+function projectFormSubmit() {
+    const form = document.querySelector('.new-project-form');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const inputElement = document.querySelector('input[name="projectname"]');
+        const name = inputElement.value;
+        if (inputElement.validity.typeMismatch) {
+            alert('Only lowercase letters, numbers, and underscores are allowed');
+        }
+        if (allProjects.find(project => project.name === name)) {
+            alert('Project with this name already exists');
+            return;
+        }
+        if ((name.trim() !== '') && (name.length > 3)){
+            const newProject = new Project(name);
+            allProjects.push(newProject);
+            console.log('Project added: ', newProject);
+            inputElement.value = '';
+            createAllProjectsPage();
+        } else {
+            console.log('Project Name should be atleast 4 characters')
+        }
+    });
 }
 
 function createProjectsList() {
@@ -66,11 +95,13 @@ function createProjectsList() {
         const button = document.createElement('button');
         button.classList.add('remove-button');
         button.textContent = 'Remove';
+        const hr = document.createElement('hr');
 
         // inserting them 
         projectCard.appendChild(h2);
         projectCard.appendChild(button);
         li.appendChild(projectCard);
+        li.appendChild(hr);
         ol.appendChild(li);
     })
     
@@ -87,34 +118,23 @@ function createProjectsList() {
         });
     });
 
-}
+    // remove button
+    document.querySelectorAll('.remove-button').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const projectName = this.parentElement.querySelector('.project-name').textContent;
+            const projectIndex = allProjects.findIndex(project => project.name === projectName);
+            allProjects.splice(projectIndex, 1);
+            createAllProjectsPage();
+        });
+    });
 
-function addingNewProject(){
-    const addNewProject = document.querySelector('#new-project-button');
-    const inputElement = document.querySelector('input[name="projectname"]');
-    const name = inputElement.value;
-    if ((name.trim() !== '') && (name.length > 3)){
-        const newProject = new Project(name);
-        allProjects.push(newProject);
-        console.log('Project added: ', newProject);
-        inputElement.value = '';
-    } else {
-        console.log('Project Name should be atleast 4 characters')
-    }
-    createProjectsList();
-
-}
-export function formSubmitNew() {
-    createAllProjectsPage();
-    const addNewProjectButton = document.querySelector('#new-project-button');
-    addNewProjectButton.addEventListener('click', addingNewProject);
-    navLinkActivate();
 }
 
 function sidebarUpdate(){
     const projects = document.querySelector('.projects');
-        const listItems = projects.querySelectorAll('li:not(:first-child)');
-        listItems.forEach(item => item.remove());
+    const listItems = projects.querySelectorAll('li:not(:first-child)');
+    listItems.forEach(item => item.remove());
 
     allProjects.forEach(project => {
         const li = document.createElement('li');
@@ -146,6 +166,7 @@ export function createAllProjectsPage() {
     createAllProjectForm();
     createProjectsList();
     sidebarUpdate();
+    updateActiveSidebar();
 }
 
 

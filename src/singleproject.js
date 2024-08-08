@@ -11,6 +11,7 @@ export function singleProjectLoad(projectname) {
     allProjects.forEach(project => {
         if (projectname === project.name){
             selectedProject = project;
+            console.log(selectedProject);
         } 
     });
     if (!selectedProject) {
@@ -31,9 +32,10 @@ export function singleProjectLoad(projectname) {
     const tasklistWrapper = document.createElement('div');
     tasklistWrapper.classList.add('tasklist-wrapper');
 
-    selectedProject.tasks.forEach(task => {
+    selectedProject.tasks.forEach((task, index) => {
         const taskItem = document.createElement('div');
         taskItem.classList.add('taskItem');
+        taskItem.dataset.taskIndex = index; // Store the index in a data attribute
         const leftTask = document.createElement('div');
         leftTask.classList.add('left-task');
         const input = document.createElement('input');
@@ -82,7 +84,109 @@ export function singleProjectLoad(projectname) {
     const taskaddWrapper = document.createElement('div');
     taskaddWrapper.classList.add('taskadd-wrapper');
     main.appendChild(taskaddWrapper);
+
+
+    // task opening 
+    const tasks = document.querySelectorAll('.taskItem');
+    tasks.forEach(task => {
+        task.addEventListener('click', function() {
+            if (event.target.tagName !== 'INPUT' && event.target.tagName !== 'BUTTON') {
+                const tasknumber = this.dataset.taskIndex;
+                taskOpener(selectedProject, tasknumber);
+            } else if (event.target.tagName === 'INPUT') {
+                if (input.id === 'completed'){
+                    const tasknumber = this.dataset.taskIndex;
+                    changeCompletionStatus(selectedProject, tasknumber);
+                }
+            }
+        });
+    });
+
+    // // checkbox working 
+    // const checkboxes = document.querySelector('#completed');
+    // checkboxes.forEach(checkbox => {
+    //     checkbox.addEventListener('click', function(event) {
+    //         event.stopPropagation();
+    //         // Add your specific function here, e.g., update task priority or completion status
+    //     });
+    // });
     
+    
+}
+
+function taskOpener(selectedProject, tasknumber) {  
+    const task = selectedProject.tasks[tasknumber];
+    console.log(task);
+    //  write the js code to create this Modal Structure
+    // <div id="taskModal" class="modal">
+    //     <div class="modal-content">
+    //         <span class="close-button">&times;</span>
+    //         <h2 id="modalTaskTitle">Task Title</h2>
+    //          <div class="content">
+        //         <p id="modalTaskDesc">Task Description</p>
+        //         <p id="modalTaskDueDate">Due Date: <span></span></p>
+        //         <p id="modalTaskPriority">Priority: <span></span></p>
+        //         <p id="modalTaskCompleted">Completed: <span></span></p>
+                //</div>
+    //     </div>
+    // </div>
+
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+    modal.id = 'taskModal';
+
+    const modalContent = document.createElement('div');
+    modalContent.classList.add('modal-content');
+
+    const closeButton = document.createElement('span');
+    closeButton.classList.add('close-button');
+    closeButton.textContent = '×';
+
+    const h2 = document.createElement('h2');
+    h2.id = 'modalTaskTitle';
+    h2.textContent = task.title;
+
+    const content = document.createElement('div');
+    content.classList.add('content')
+
+    const p1 = document.createElement('p');
+    p1.id = 'modalTaskDesc';
+    p1.textContent = task.desc;
+
+    const p2 = document.createElement('p');
+    p2.id = 'modalTaskDueDate';
+    p2.textContent = `Due Date: ${task.duedate}`;
+
+    const p3 = document.createElement('p');
+    p3.id = 'modalTaskPriority';
+    p3.textContent = `Priority: ${task.priority}`;
+
+    const p4 = document.createElement('p');
+    p4.id = 'modalTaskCompleted';
+    p4.textContent = `Completed: ${task.priority}`; 
+
+    modalContent.appendChild(closeButton);
+    modalContent.appendChild(h2);
+    content.appendChild(p1);
+    content.appendChild(p2);
+    content.appendChild(p3);
+    content.appendChild(p4);
+    modalContent.appendChild(content);
+
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+
+    const close = document.querySelector('.close-button');
+    close.addEventListener('click', function() {
+        modal.style.display = 'none';
+        document.body.removeChild(modal);
+    });
+}
+
+function changeCompletionStatus(selectedProject, tasknumber) {
+    const task = selectedProject.tasks[tasknumber];
+    task.toggleCompletion();
+    createSingleProject(selectedProject);
 }
 
 
@@ -112,6 +216,8 @@ export function makeTaskForm(projectName) {
     tinput.id ='task-name';
     tinput.setAttribute('name' ,'task-name');
     tinput.required = true;
+    tinput.setAttribute('placeholder', 'Enter Task Name');
+    tinput.setAttribute('pattern', '^[A-Za-z][A-Za-z0-9_]*$');
 
     formGroup1.appendChild(ltaskname);
     formGroup1.appendChild(tinput);
@@ -193,13 +299,22 @@ export function makeTaskForm(projectName) {
         dateFormat: "Y-m-d",
         minDate: "today", // Disables past dates
       });
-        
+    
+    validateTaskForm(projectName);
+    
+}
+
+function validateTaskForm(projectName) {
+    const form = document.getElementById('add-task-form');
+    const tinput = document.getElementById('task-name');
+    const textarea = document.getElementById('task-desc');
+
     form.addEventListener('submit', function(event) {
         event.preventDefault();
         const name = tinput.value;
         if (name.length< 4 || name.length >28){
             alert('Task name should be with 4-28 characters');
-            return
+            return;
         }
         let description = 'No description mentioned'
         if (textarea.value){
@@ -217,8 +332,12 @@ export function makeTaskForm(projectName) {
             priority = true;
         }
 
-        const task = new TodoItem(name, description, deadline, priority);
+        const task = new TodoItem(name, description, deadline, priority, false);
         const project = allProjects.find(p => p.name === projectName);
+        if (project.tasks.find(t => t.title === name)){
+            alert('Task with this name already exists');
+            return;
+        }
         project.addTask(task);
         console.log('it worked');
         createSingleProject(projectName);
@@ -228,7 +347,56 @@ export function makeTaskForm(projectName) {
 }
 
 
+export function updateActiveSidebar(projectname) {
+    const projects = document.querySelector('.projects');
+    const listItems = projects.querySelectorAll('li:not(:first-child)');
+    const allProject = document.querySelector('.all-pro');
+    allProject.addEventListener('click', function() {
+        allProActive('active');
+    });
+
+    listItems.forEach(list => {
+        list.addEventListener('click', function() {
+            const projectlink = list.querySelector('a');
+            const projectName = projectlink.querySelector('span').textContent;
+            createSingleProject(projectName);
+        });
+    });
+    if(!projectname) {
+        allProActive('active');
+        return;
+    }
+    listItems.forEach(list => {
+        let span = list.querySelector('span').textContent;
+        if (span === projectname) {
+            list.classList.add('active');
+            allProActive('inactive');
+        } else {
+            list.classList.remove('active');
+        }
+    });
+
+
+
+}
+
+function allProActive(status){
+    const allProject = document.querySelector('.all-pro');
+    if (status === 'active'){
+        allProject.parentElement.classList.add('active');
+    } else {
+        allProject.parentElement.classList.remove('active');
+    }
+}
+
+
+
+
+
+
+
 export function createSingleProject(projectname) {
+    updateActiveSidebar(projectname);
     singleProjectLoad(projectname);
     makeTaskForm(projectname);
 }
